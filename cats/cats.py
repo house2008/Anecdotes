@@ -12,7 +12,6 @@ from ucb import main, interact, trace
 from datetime import datetime
 import random
 
-
 ###########
 # Phase 1 #
 ###########
@@ -37,7 +36,12 @@ def pick(paragraphs, select, k):
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    for x in paragraphs:
+        if select(x):
+            if not k:
+                return x
+            k -= 1
+    return ""
     # END PROBLEM 1
 
 
@@ -57,7 +61,14 @@ def about(subject):
     assert all([lower(x) == x for x in subject]), "subjects should be lowercase."
 
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    def select(paragraph):
+        paragraph = split(remove_punctuation(lower(paragraph)))
+        for x in paragraph:
+            if x in subject:
+                return True
+        return False
+
+    return select
     # END PROBLEM 2
 
 
@@ -87,7 +98,16 @@ def accuracy(typed, source):
     typed_words = split(typed)
     source_words = split(source)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if not typed_words and not source_words:
+        return 100.0
+    len1 = len(typed_words)
+    len2 = len(source_words)
+    ac = sum(
+        1 for i in range(len2) if (i < len1) and (source_words[i] == typed_words[i])
+    )
+    if ac == 0:
+        return 0.0
+    return ac / len1 * 100.0
     # END PROBLEM 3
 
 
@@ -105,7 +125,7 @@ def wpm(typed, elapsed):
     """
     assert elapsed > 0, "Elapsed time must be positive"
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    return (len(typed) / 5) / (elapsed / 60)
     # END PROBLEM 4
 
 
@@ -119,7 +139,9 @@ def memo(f):
     cache = {}
 
     def memoized(*args):
-        immutable_args = deep_convert_to_tuple(args)  # convert *args into a tuple representation
+        immutable_args = deep_convert_to_tuple(
+            args
+        )  # convert *args into a tuple representation
         if immutable_args not in cache:
             result = f(*immutable_args)
             cache[immutable_args] = result
@@ -166,7 +188,12 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     'testing'
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if typed_word in word_list:
+        return typed_word
+    ans = min(word_list, key=lambda x: diff_function(typed_word, x, limit))
+    if ans > limit:
+        return typed_word
+    return ans
     # END PROBLEM 5
 
 
@@ -192,8 +219,18 @@ def furry_fixes(typed, source, limit):
     >>> furry_fixes("rose", "hello", big_limit)   # Substitute: r->h, o->e, s->l, e->l, length difference of 1.
     5
     """
+
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    def helper(typed, source, dif):
+        if dif > limit:
+            return dif
+        if not typed or not source:
+            return dif + len(typed) + len(source)
+        if typed[0] == source[0]:
+            return helper(typed[1:], source[1:], dif)
+        return helper(typed[1:], source[1:], dif + 1)
+
+    return helper(typed, source, 0)
     # END PROBLEM 6
 
 
@@ -214,22 +251,26 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
+
+    if (
+        limit < 0 or typed == source
+    ):  # Base cases should go here, you may add more base cases as needed.
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return 0
         # END
+    if not typed or not source:
+        return len(typed) + len(source)
     # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
+    if typed[0] == source[0]:  # Feel free to remove or add additional cases
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return minimum_mewtations(typed[1:], source[1:], limit)
         # END
     else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
+        add = minimum_mewtations(typed, source[1:], limit - 1)  # Fill in these lines
+        remove = minimum_mewtations(typed[1:], source, limit - 1)
+        substitute = minimum_mewtations(typed[1:], source[1:], limit - 1)
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return 1 + min(add, remove, substitute)
         # END
 
 
@@ -275,7 +316,7 @@ def report_progress(typed, source, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    
     # END PROBLEM 8
 
 
@@ -301,7 +342,7 @@ def time_per_word(words, timestamps_per_player):
     # BEGIN PROBLEM 9
     times = []  # You may remove this line
     # END PROBLEM 9
-    return {'words': words, 'times': times}
+    return {"words": words, "times": times}
 
 
 def fastest_words(words_and_times):
@@ -322,9 +363,9 @@ def fastest_words(words_and_times):
     [4, 1, 6]
     """
     check_words_and_times(words_and_times)  # verify that the input is properly formed
-    words, times = words_and_times['words'], words_and_times['times']
+    words, times = words_and_times["words"], words_and_times["times"]
     player_indices = range(len(times))  # contains an *index* for each player
-    word_indices = range(len(words))    # contains an *index* for each word
+    word_indices = range(len(words))  # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
     # END PROBLEM 10
@@ -334,12 +375,20 @@ def check_words_and_times(words_and_times):
     """Check that words_and_times is a {'words': words, 'times': times} dictionary
     in which each element of times is a list of numbers the same length as words.
     """
-    assert 'words' in words_and_times and 'times' in words_and_times and len(words_and_times) == 2
-    words, times = words_and_times['words'], words_and_times['times']
+    assert (
+        "words" in words_and_times
+        and "times" in words_and_times
+        and len(words_and_times) == 2
+    )
+    words, times = words_and_times["words"], words_and_times["times"]
     assert all([type(w) == str for w in words]), "words should be a list of strings"
     assert all([type(t) == list for t in times]), "times should be a list of lists"
-    assert all([isinstance(i, (int, float)) for t in times for i in t]), "times lists should contain numbers"
-    assert all([len(t) == len(words) for t in times]), "There should be one word per time."
+    assert all(
+        [isinstance(i, (int, float)) for t in times for i in t]
+    ), "times lists should contain numbers"
+    assert all(
+        [len(t) == len(words) for t in times]
+    ), "There should be one word per time."
 
 
 def get_time(times, player_num, word_index):
@@ -347,8 +396,12 @@ def get_time(times, player_num, word_index):
     given a list of lists of times returned by time_per_word."""
     num_players = len(times)
     num_words = len(times[0])
-    assert word_index < len(times[0]), f"word_index {word_index} outside of 0 to {num_words-1}"
-    assert player_num < len(times), f"player_num {player_num} outside of 0 to {num_players-1}"
+    assert word_index < len(
+        times[0]
+    ), f"word_index {word_index} outside of 0 to {num_words-1}"
+    assert player_num < len(
+        times
+    ), f"player_num {player_num} outside of 0 to {num_players-1}"
     return times[player_num][word_index]
 
 
