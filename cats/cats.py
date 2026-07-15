@@ -191,7 +191,7 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     if typed_word in word_list:
         return typed_word
     ans = min(word_list, key=lambda x: diff_function(typed_word, x, limit))
-    if ans > limit:
+    if diff_function(typed_word,ans,limit) > limit:
         return typed_word
     return ans
     # END PROBLEM 5
@@ -316,7 +316,13 @@ def report_progress(typed, source, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    
+    ct = 0
+    while ct < len(typed) and typed[ct] == source[ct]:
+        ct += 1
+    ratio = ct / len(source)
+    report = {'id':user_id,'progress':ratio}
+    upload(report)
+    return ratio
     # END PROBLEM 8
 
 
@@ -341,6 +347,12 @@ def time_per_word(words, timestamps_per_player):
     tpp = timestamps_per_player  # A shorter name (for convenience)
     # BEGIN PROBLEM 9
     times = []  # You may remove this line
+    n = len(words)
+    for player in tpp:
+        ti = []
+        for j in range(n):
+            ti.append(player[j+1]-player[j])
+        times.append(ti)
     # END PROBLEM 9
     return {"words": words, "times": times}
 
@@ -367,7 +379,11 @@ def fastest_words(words_and_times):
     player_indices = range(len(times))  # contains an *index* for each player
     word_indices = range(len(words))  # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    ans = [[] for j in player_indices]
+    for i in word_indices:
+        idx = min(player_indices,key = lambda x:get_time(times,x,i))
+        ans[idx].append(words[i])
+    return ans
     # END PROBLEM 10
 
 
@@ -405,7 +421,7 @@ def get_time(times, player_num, word_index):
     return times[player_num][word_index]
 
 
-enable_multiplayer = False  # Change to True when you're ready to race.
+enable_multiplayer = True  # Change to True when you're ready to race.
 
 ##########################
 # Command Line Interface #
