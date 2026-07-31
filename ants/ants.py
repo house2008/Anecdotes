@@ -143,12 +143,14 @@ class Ant(Insect):
     def double(self):
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        if self.is_doubled == False:
+            self.is_doubled = True
+            self.damage = self.damage * 2
         # END Problem 12
 
 
 class HarvesterAnt(Ant):
-    """HarvesterAnt produces 1 additional food per turn for the colony."""
+    """HarvesterAnt p5roduces 1 additional food per turn for the colony."""
 
     name = 'Harvester'
     implemented = True
@@ -412,7 +414,7 @@ class QueenAnt(ThrowerAnt):
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 12
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 12
 
     def action(self, gamestate):
@@ -420,7 +422,15 @@ class QueenAnt(ThrowerAnt):
         in her tunnel.
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        super().action(gamestate)
+        cur = self.place.exit
+        while cur is not None:
+            ant = cur.ant
+            if ant is not None:
+                ant.double()
+                if ant.is_container and ant.ant_contained is not None:
+                    ant.ant_contained.double()
+            cur = cur.exit
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -428,7 +438,9 @@ class QueenAnt(ThrowerAnt):
         remaining, signal the end of the game.
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        self.health -= amount
+        if self.health <= 0:
+            ants_lose()
         # END Problem 12
 
 
