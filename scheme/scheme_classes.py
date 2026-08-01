@@ -103,7 +103,7 @@ class LambdaProcedure(Procedure):
             repr(self.formals), repr(self.body), repr(self.env))
 
 class MuProcedure(Procedure):
-    """A procedure defined by a mu expression, which has dynamic scope.
+    r"""A procedure defined by a mu expression, which has dynamic scope.
      _________________
     < Scheme is cool! >
      -----------------
