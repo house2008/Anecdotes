@@ -33,7 +33,9 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         return scheme_forms.SPECIAL_FORMS[first](rest, env)
     else:
         # BEGIN PROBLEM 3
-        "*** YOUR CODE HERE ***"
+        proc = scheme_eval(expr.first,env)
+        vals = expr.rest.map(lambda operand:scheme_eval(operand,env))
+        return scheme_apply(proc,vals,env)
         # END PROBLEM 3
 
 def scheme_apply(procedure, args, env):
