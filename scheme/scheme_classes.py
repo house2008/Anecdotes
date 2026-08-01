@@ -54,7 +54,11 @@ class Frame:
         if len(formals) != len(vals):
             raise SchemeError('Incorrect number of arguments to function call')
         # BEGIN PROBLEM 8
-        "*** YOUR CODE HERE ***"
+        child = Frame(self)
+        while formals is not nil:
+            child.bindings[formals.first] = vals.first
+            formals, vals = formals.rest, vals.rest
+        return child
         # END PROBLEM 8
 
 ##############
